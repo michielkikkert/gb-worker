@@ -3,12 +3,18 @@ name = "gb-worker"
 main = "src/index.ts"
 compatibility_date = "2024-11-06"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = true
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
 # Configuration: https://developers.cloudflare.com/workers/observability/logs/workers-logs/#enable-workers-logs
 [observability]
 enabled = true
+
+[vars]
+PROXY_TARGET="https://www.mintminds.com"  # The non-edge URL to your website
+GROWTHBOOK_API_HOST="https://cdn.growthbook.io"
+GROWTHBOOK_CLIENT_KEY="sdk-eJC0qCGZjxZPg5X"
 
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure

@@ -15,5 +15,9 @@
     "typescript": "^5.5.2",
     "vitest": "2.0.5",
     "wrangler": "^3.60.3"
+  },
+  "dependencies": {
+    "@growthbook/edge-cloudflare": "^0.1.15",
+    "@growthbook/growthbook": "^1.2.1"
   }
 }
