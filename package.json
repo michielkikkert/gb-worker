@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@growthbook/edge-cloudflare": "^0.1.15",
+    "@growthbook/edge-utils": "^0.1.7",
     "@growthbook/growthbook": "^1.2.1"
   }
 }
