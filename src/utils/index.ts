@@ -1,11 +1,12 @@
-export {
+export type {
   Context,
   Config,
   Helpers,
   ExperimentRunEnvironment,
   Route,
 } from "./types";
-export { ConfigEnv, defaultContext, getConfig } from "./config";
+export { defaultContext, getConfig } from './config';
+export type { ConfigEnv } from "./config";
 
 export { edgeApp, getOriginUrl } from "./app";
 

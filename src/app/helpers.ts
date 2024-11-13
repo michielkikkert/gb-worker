@@ -1,4 +1,4 @@
-import { Context, getOriginUrl } from "@growthbook/edge-utils";
+import { Context, getOriginUrl } from "../utils";
 // @ts-ignore
 import { parse } from "cookie";
 

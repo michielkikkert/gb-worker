@@ -12,9 +12,10 @@ workers_dev = true
 enabled = true
 
 [vars]
-PROXY_TARGET="https://www.mintminds.com"  # The non-edge URL to your website
+PROXY_TARGET="https://www.wijkraadzuidoostenschede.nl"  # The non-edge URL to your website
 GROWTHBOOK_API_HOST="https://cdn.growthbook.io"
 GROWTHBOOK_CLIENT_KEY="sdk-eJC0qCGZjxZPg5X"
+GROWTHBOOK_TRACKING_CALLBACK="(experiment, results) => { console.log('browser tracking callback - quaribubble', {experiment, results}); }"
 
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure

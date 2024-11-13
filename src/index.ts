@@ -72,6 +72,10 @@ export default {
 		const context = await init(env, {
 			attributes: {
 				cookieConsent: true
+			},
+			edgeTrackingCallback: (experiment, results) => {
+				// todo: replace with your tracking library
+				console.log('edge tracking callback', {experiment, results});
 			}
 		});
 		// @ts-ignore
@@ -90,8 +94,8 @@ export default {
 
 		return response;
 
-		const res = new Response(updatedHtml, {headers: response.headers, status: response.status} );
-		return res;
+		// const res = new Response(updatedHtml, {headers: response.headers, status: response.status} );
+		// return res;
 
 	},
 } satisfies ExportedHandler<Env>;

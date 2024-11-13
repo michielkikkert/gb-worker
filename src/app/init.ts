@@ -4,7 +4,7 @@ import {
   defaultContext,
   getConfig,
   Config,
-} from "@growthbook/edge-utils";
+} from "../utils";
 import { FeatureApiResponse } from "@growthbook/growthbook";
 import {
   getRequestURL,

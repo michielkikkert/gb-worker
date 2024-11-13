@@ -87,6 +87,7 @@ export function injectScript({
     stickyBucketAssignmentDocs: stickyAssignments,
   };
   if (trackingCallback) {
+    console.log('>>>> trackingCallback', deferredTrackingCalls)
     gbContext.trackingCallback = "__TRACKING_CALLBACK__";
   }
 
@@ -219,6 +220,9 @@ function scrubInvalidTrackingCalls(
   deferredTrackingCalls: TrackingData[],
   preRedirectChangeIds: string[],
 ): TrackingData[] {
+
+  console.log('>>>> Scrub invalid callbacks', deferredTrackingCalls);
+
   return deferredTrackingCalls.filter((data) => {
     const exp = data.experiment as AutoExperiment;
     // remove tracking for any visual experiments that ran during the redirect loop
