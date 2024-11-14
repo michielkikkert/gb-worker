@@ -12,6 +12,8 @@ export async function applyDomMutations({
 }) {
   if (!domChanges.length) return body;
 
+  console.log('applyDomMutations!!!');
+
   const root = parse(body);
   const headEl = root.querySelector("head");
 

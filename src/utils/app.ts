@@ -104,6 +104,7 @@ export async function edgeApp<Req, Res>(
     decryptionKey: context.config.decryptionKey,
     attributes,
     applyDomChangesCallback: (changes: AutoExperimentVariation) => {
+      console.log(' >>>>>>>>>> applyDomChangesCallback', changes)
       domChanges.push(changes);
       return () => {};
     },
@@ -125,6 +126,8 @@ export async function edgeApp<Req, Res>(
   await growthbook.init({
     payload: context.config.payload,
   });
+
+  console.log(growthbook.getAllResults())
 
   const oldUrl = url;
   url = await redirect({

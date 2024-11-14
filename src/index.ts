@@ -65,18 +65,24 @@ import { getUUID, Context } from '@growthbook/edge-utils';
 
 // EXP3 - works!
 import { init } from './app/init';
-import { edgeApp } from './utils';
+import { applyDomMutations, edgeApp } from './utils';
+import { Experiment, Result } from '@growthbook/growthbook';
+import { parse } from 'node-html-parser';
+
+let currentExperiment: { experiment: Experiment<any>; result: Result<any>; body: any; } | null = null;
 
 export default {
 	fetch: async function (request, env, ctx) {
 		const context = await init(env, {
 			attributes: {
-				cookieConsent: true
+				cookieConsent: "true",
+				userID: "test123"
 			},
-			edgeTrackingCallback: (experiment, results) => {
-				// todo: replace with your tracking library
-				console.log('edge tracking callback', {experiment, results});
-			}
+			// edgeTrackingCallback: (experiment, results) => {
+			// 	// todo: replace with your tracking library
+			// 	console.log('edge tracking callback', {experiment, results, body});
+			// }
+			edgeTrackingCallback: (experiment, result) => {currentExperiment = {experiment, result, body}}
 		});
 		// @ts-ignore
 		const { response, growthbook, body }: {response: Response, growthbook: GrowthBook, body?: any} = await edgeApp<Request, Response>(context, request);
@@ -85,20 +91,30 @@ export default {
 			return response;
 		}
 
-		console.log((growthbook as any)?.context?.attributes);
-		console.log(growthbook?.getPayload());
-		console.log('gbuuid', growthbook?.context?.attributes.id);
-		console.log('my-fat-feature is', growthbook?.isOn('my-fat-feature') ? 'ON': 'OFF');
+		// console.log((growthbook as any)?.context?.attributes);
+		// console.log(' -- PAYLOAD', growthbook?.getPayload());
+		// console.log(' -- EXPERIMENTS', growthbook.getExperiments());
+		// console.log(' -- FEATURES', growthbook.getFeatures());
+		// console.log(' -- RESULTS', growthbook.getAllResults());
+		console.log(' -- gbuuid', growthbook?.context?.attributes.id);
+		console.log(' -- my-fat-feature is', growthbook?.isOn('my-fat-feature') ? 'ON': 'OFF');
 
-		let updatedHtml = "Whaha!"
+		console.log(' --- CURRENT EXPERIMENT', currentExperiment?.experiment.name);
+
+		if(currentExperiment) {
+			const originalBody = parse(body);
+			const inject = `"ACTIVE EXPERIMENT: ${currentExperiment.experiment.name}"`;
+			console.log(inject)
+			originalBody.appendChild( parse(`<script>console.log(${inject})</script>`) )
+			const newResponse = new Response(originalBody.toString(),  {headers: response.headers, status: response.status})
+			return newResponse;
+
+		}
 
 		return response;
-
-		// const res = new Response(updatedHtml, {headers: response.headers, status: response.status} );
-		// return res;
-
 	},
 } satisfies ExportedHandler<Env>;
+
 
 
 // EXP4 - goes wrong with resources (no images on site visible etc)

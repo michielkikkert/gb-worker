@@ -87,7 +87,6 @@ export function injectScript({
     stickyBucketAssignmentDocs: stickyAssignments,
   };
   if (trackingCallback) {
-    console.log('>>>> trackingCallback', deferredTrackingCalls)
     gbContext.trackingCallback = "__TRACKING_CALLBACK__";
   }
 
