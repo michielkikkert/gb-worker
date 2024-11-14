@@ -15,10 +15,12 @@ enabled = true
 PROXY_TARGET="https://www.mintminds.com"  # The non-edge URL to your website
 GROWTHBOOK_API_HOST="https://cdn.growthbook.io"
 GROWTHBOOK_CLIENT_KEY="sdk-eJC0qCGZjxZPg5X"
+#GROWTHBOOK_CLIENT_KEY="sdk-oQLLry5YXn3tseQ"
 GROWTHBOOK_TRACKING_CALLBACK="(experiment, results) => { console.log('browser tracking callback - quaribubble', {experiment, results}); }"
 INJECT_REDIRECT_URL_SCRIPT="false"
 ENABLE_STREAMING="true"  # default "false". Streaming SSE updates on browser.
 ENABLE_STICKY_BUCKETING="false"  # default "false". Use cookie-based sticky bucketing on edge and browser.
+DISABLE_INJECTIONS="false"  # default "false"
 
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure

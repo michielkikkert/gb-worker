@@ -98,48 +98,6 @@ export async function edgeApp<Req, Res>(
       });
   }
 
-  const growthbook = new GrowthBook({
-    apiHost: context.config.apiHost,
-    clientKey: context.config.clientKey,
-    decryptionKey: context.config.decryptionKey,
-    attributes,
-    applyDomChangesCallback: (changes: AutoExperimentVariation) => {
-      console.log(' >>>>>>>>>> applyDomChangesCallback', changes)
-      domChanges.push(changes);
-      return () => {};
-    },
-    url,
-    disableVisualExperiments: ["skip", "browser"].includes(
-      context.config.runVisualEditorExperiments,
-    ),
-    disableJsInjection: context.config.disableJsInjection,
-    disableUrlRedirectExperiments: ["skip", "browser"].includes(
-      context.config.runUrlRedirectExperiments,
-    ),
-    disableCrossOriginUrlRedirectExperiments: ["skip", "browser"].includes(
-      context.config.runCrossOriginUrlRedirectExperiments,
-    ),
-    stickyBucketService,
-    trackingCallback: context.config.edgeTrackingCallback,
-  });
-
-  await growthbook.init({
-    payload: context.config.payload,
-  });
-
-  console.log(growthbook.getAllResults())
-
-  const oldUrl = url;
-  url = await redirect({
-    context: context as Context<unknown, unknown>,
-    req,
-    setCookie,
-    growthbook,
-    previousUrl: url,
-    resetDomChanges,
-    setPreRedirectChangeIds: setPreRedirectChangeIds,
-  });
-
   const originUrl = getOriginUrl(context as Context<unknown, unknown>, url);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -154,7 +112,7 @@ export async function edgeApp<Req, Res>(
     )) as Res & { status: number; headers: Record<string, any>; text: any };
 
     if(!fetchedResponse.headers?.get('content-type')?.includes('text/html')) {
-      console.log('NOT HTML - > fallthrough', url)
+      // console.log('NOT HTML - > fallthrough', url)
       // const response = await context.helpers.proxyRequest?.(context, req, res, next);
       return {
         response: fetchedResponse,
@@ -203,6 +161,49 @@ export async function edgeApp<Req, Res>(
       growthbook: null
     }
   }
+
+  const growthbook = new GrowthBook({
+    apiHost: context.config.apiHost,
+    clientKey: context.config.clientKey,
+    decryptionKey: context.config.decryptionKey,
+    attributes,
+    applyDomChangesCallback: (changes: AutoExperimentVariation) => {
+      console.log(' >>>>>>>>>> applyDomChangesCallback', changes)
+      domChanges.push(changes);
+      return () => {};
+    },
+    url,
+    disableVisualExperiments: ["skip", "browser"].includes(
+      context.config.runVisualEditorExperiments,
+    ),
+    disableJsInjection: context.config.disableJsInjection,
+    disableUrlRedirectExperiments: ["skip", "browser"].includes(
+      context.config.runUrlRedirectExperiments,
+    ),
+    disableCrossOriginUrlRedirectExperiments: ["skip", "browser"].includes(
+      context.config.runCrossOriginUrlRedirectExperiments,
+    ),
+    stickyBucketService,
+    trackingCallback: context.config.edgeTrackingCallback,
+  });
+
+  await growthbook.init({
+    streaming: true,
+    payload: context.config.payload,
+  });
+
+  const oldUrl = url;
+  url = await redirect({
+    context: context as Context<unknown, unknown>,
+    req,
+    setCookie,
+    growthbook,
+    previousUrl: url,
+    resetDomChanges,
+    setPreRedirectChangeIds: setPreRedirectChangeIds,
+  });
+
+
 
   if (context.config.forwardProxyHeaders && fetchedResponse?.headers) {
     headers = fetchedResponse.headers;

@@ -75,14 +75,13 @@ export default {
 	fetch: async function (request, env, ctx) {
 		const context = await init(env, {
 			attributes: {
-				cookieConsent: "true",
-				userID: "test123"
+				cookieConsent: {statistics: true},
+				userID: "test1234"
 			},
-			// edgeTrackingCallback: (experiment, results) => {
-			// 	// todo: replace with your tracking library
-			// 	console.log('edge tracking callback', {experiment, results, body});
-			// }
-			edgeTrackingCallback: (experiment, result) => {currentExperiment = {experiment, result, body}}
+			edgeTrackingCallback: (experiment, result) => {
+				console.log(' -------------------- TRIGGER ------------------');
+				currentExperiment = {experiment, result, body}
+			}
 		});
 		// @ts-ignore
 		const { response, growthbook, body }: {response: Response, growthbook: GrowthBook, body?: any} = await edgeApp<Request, Response>(context, request);
@@ -93,22 +92,25 @@ export default {
 
 		// console.log((growthbook as any)?.context?.attributes);
 		// console.log(' -- PAYLOAD', growthbook?.getPayload());
-		// console.log(' -- EXPERIMENTS', growthbook.getExperiments());
+		console.log(' -- EXPERIMENTS', growthbook.getExperiments());
 		// console.log(' -- FEATURES', growthbook.getFeatures());
-		// console.log(' -- RESULTS', growthbook.getAllResults());
+		console.log(' -- RESULTS', growthbook.getAllResults());
 		console.log(' -- gbuuid', growthbook?.context?.attributes.id);
 		console.log(' -- my-fat-feature is', growthbook?.isOn('my-fat-feature') ? 'ON': 'OFF');
+		console.log(' -- CF-001 is', growthbook?.isOn('CF-001') ? 'ON': 'OFF');
 
-		console.log(' --- CURRENT EXPERIMENT', currentExperiment?.experiment.name);
+		// console.log(' --- CURRENT EXPERIMENT', currentExperiment?.experiment.name);
 
 		if(currentExperiment) {
+			console.log('>>>>>>>>>>>>>> ', currentExperiment.experiment, currentExperiment.result);
 			const originalBody = parse(body);
-			const inject = `"ACTIVE EXPERIMENT: ${currentExperiment.experiment.name}"`;
+			const inject = `"FROM WORKER -> ACTIVE EXPERIMENT: ${currentExperiment.experiment?.name}"`;
 			console.log(inject)
 			originalBody.appendChild( parse(`<script>console.log(${inject})</script>`) )
 			const newResponse = new Response(originalBody.toString(),  {headers: response.headers, status: response.status})
 			return newResponse;
-
+		} else {
+			console.log(' >>>>>>> NO ACTIVE EXPERIMENT <<<<<<<< ')
 		}
 
 		return response;
